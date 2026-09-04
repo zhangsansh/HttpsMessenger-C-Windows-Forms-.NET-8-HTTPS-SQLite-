@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HttpsMessenger 完整帮助文档</title>
+  <style>
+    :root {
+      --bg: #f5f7fa; --card: #ffffff; --text: #1f2937; --muted: #6b7280;
+      --accent: #0f766e; --border: #e5e7eb; --code-bg: #0b1220; --code-fg: #e5e7eb;
+      --warn-bg: #fff7ed; --warn-bd: #fdba74; --tip-bg: #ecfdf5; --tip-bd: #99f6e4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif;
+      color: var(--text); background: linear-gradient(180deg, #e8f5f3 0%, var(--bg) 280px);
+      line-height: 1.75;
+    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 28px 20px 80px; }
+    header, nav, section {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 22px 26px; margin-bottom: 16px;
+    }
+    header { padding: 28px; }
+    h1 { margin: 0 0 8px; font-size: 28px; color: var(--accent); }
+    .sub { color: var(--muted); margin: 0; }
+    nav { position: sticky; top: 8px; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+    nav a {
+      color: var(--accent); text-decoration: none; margin-right: 12px; margin-bottom: 6px;
+      display: inline-block; font-weight: 600; font-size: 13px;
+    }
+    nav a:hover { text-decoration: underline; }
+    h2 {
+      margin-top: 0; border-left: 4px solid var(--accent); padding-left: 10px; font-size: 20px;
+    }
+    h3 { color: #115e59; margin-bottom: 8px; }
+    h4 { margin-bottom: 6px; color: #334155; }
+    code {
+      background: #ecfdf5; color: #065f46; padding: 1px 6px; border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace; font-size: 13px;
+    }
+    pre {
+      background: var(--code-bg); color: var(--code-fg); padding: 14px 16px;
+      border-radius: 10px; overflow-x: auto; font-size: 12.5px;
+      font-family: Consolas, "Courier New", monospace; line-height: 1.5;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+    th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #f0fdfa; }
+    ul, ol { padding-left: 22px; }
+    .tip {
+      background: var(--tip-bg); border: 1px solid var(--tip-bd); border-radius: 10px;
+      padding: 12px 14px; color: #115e59; margin: 12px 0;
+    }
+    .warn {
+      background: var(--warn-bg); border: 1px solid var(--warn-bd); border-radius: 10px;
+      padding: 12px 14px; color: #9a3412; margin: 12px 0;
+    }
+    .toc-note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .badge {
+      display: inline-block; background: #ccfbf1; color: #0f766e; padding: 2px 8px;
+      border-radius: 999px; font-size: 12px; font-weight: 600; margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>HttpsMessenger 完整帮助文档</h1>
+    <p class="sub">
+      C# WinForms · HTTPS 双向通讯 · MES 生产接口 · SQLite/Excel 日志 · 离线补传 · 多语言 · 版本 2.0
+    </p>
+    <p class="toc-note">程序内按 <strong>F1</strong> 或菜单「帮助 → 打开帮助文档」可随时打开本文件。</p>
+  </header>
+
+  <nav>
+    <a href="#overview">1.概述</a>
+    <a href="#features">2.功能</a>
+    <a href="#ui">3.界面</a>
+    <a href="#https-usage">4.HTTPS用法</a>
+    <a href="#mes-usage">5.MES用法</a>
+    <a href="#mes-protocol">6.MES协议</a>
+    <a href="#mes-apis">7.MES接口</a>
+    <a href="#code">8.代码结构</a>
+    <a href="#data">9.数据路径</a>
+    <a href="#build">10.编译运行</a>
+    <a href="#env">11.运行环境</a>
+    <a href="#faq">12.FAQ</a>
+  </nav>
+
+  <!-- ==================== 1 ==================== -->
+  <section id="overview">
+    <h2>一、软件概述</h2>
+    <p>
+      <strong>HttpsMessenger</strong> 是基于 <strong>C# Windows Forms + .NET 8</strong> 开发的桌面软件，
+      主要面向教学实验、现场联调与 MES（制造执行系统）设备上位机对接场景。
+    </p>
+    <p>软件同时具备两大能力域：</p>
+    <ol>
+      <li>
+        <strong>HTTPS 通用通讯实验台</strong>：本机可作为 HTTPS 服务端与客户端，双向传消息，
+        展示 TLS/HTTP 全过程，支持自定义请求→响应字段规则（SQLite）。
+      </li>
+      <li>
+        <strong>MES 生产接口客户端</strong>：按规范通过 HTTPS POST 提交表单参数
+        <code>jsonData</code>，覆盖登录、规格下发、上料、进站、组装、过站、三坐标、托盘条码等接口；
+        支持可配置路径、离线补传、上传成功后写 Excel 日志。
+      </li>
+    </ol>
+    <div class="tip">
+      设计原则：Head/Body 分离、禁止把 JSON 拼到 URL；空值用 <code>""</code>；
+      时间格式 <code>yyyy-MM-dd HH:mm:ss</code>；<code>status=false</code> 时把 <code>result</code> 报错提示给现场人员；
+      <strong>先上传成功，再写成功日志</strong>。
+    </div>
+  </section>
+
+  <!-- ==================== 2 ==================== -->
+  <section id="features">
+    <h2>二、功能总览</h2>
+    <table>
+      <tr><th>模块</th><th>功能</th><th>说明</th></tr>
+      <tr>
+        <td rowspan="6">HTTPS 通讯</td>
+        <td>本机 HTTPS 服务</td>
+        <td>TcpListener + SslStream，自签名证书，TLS1.2/1.3</td>
+      </tr>
+      <tr><td>对端消息发送</td><td>HttpClient POST /api/message，可自定义请求字段</td></tr>
+      <tr><td>发送/响应分窗</td><td>发送窗仅显示「回复摘要」；全部响应窗显示原始 JSON 等</td></tr>
+      <tr><td>全过程追踪</td><td>TCP→TLS→HTTP→规则匹配→响应，可回看历史</td></tr>
+      <tr><td>字段规则 CRUD</td><td>SQLite 存储请求字段→响应字段规则，支持增删改查</td></tr>
+      <tr><td>运行日志</td><td>INFO/WARN/ERROR/DEBUG，内存显示 + 按日文件</td></tr>
+      <tr>
+        <td rowspan="6">MES 生产接口</td>
+        <td>10 个标准接口</td>
+        <td>LoginCheck ~ GetTaryBarcode（见第七章）</td>
+      </tr>
+      <tr><td>表单提交 jsonData</td><td>application/x-www-form-urlencoded，不拼 URL</td></tr>
+      <tr><td>路径可配置</td><td>BaseUrl 与各接口 Path 存 mes_config.json</td></tr>
+      <tr><td>离线补传</td><td>网络失败入队，恢复后可补传过站等请求</td></tr>
+      <tr><td>Excel 生产日志</td><td>上传成功后写入 Production_yyyyMMdd.xlsx</td></tr>
+      <tr><td>本地 MES 模拟</td><td>本机服务可模拟 /mes/* 接口便于联调</td></tr>
+      <tr>
+        <td rowspan="3">通用</td>
+        <td>窗口可缩放</td><td>分隔条拖动；顶部服务/对端配置区固定尺寸</td>
+      </tr>
+      <tr><td>多语言</td><td>中文 / English / 中英对照</td></tr>
+      <tr><td>帮助与环境清单</td><td>本文件 + 运行环境要求清单.html</td></tr>
+    </table>
+  </section>
+
+  <!-- ==================== 3 ==================== -->
+  <section id="ui">
+    <h2>三、界面说明</h2>
+    <p>主窗体包含以下页签（风格统一：微软雅黑、青绿强调色、分组框 + 分栏）：</p>
+    <table>
+      <tr><th>页签</th><th>内容</th></tr>
+      <tr>
+        <td>HTTPS 通讯</td>
+        <td>
+          顶部固定：「本机 HTTPS 服务」「对端连接与请求字段」；<br/>
+          下方可拖分：「发送信息窗口（仅回复）」「全部响应信息」「HTTPS 全过程 / 响应 JSON」。
+        </td>
+      </tr>
+      <tr>
+        <td>MES 生产接口</td>
+        <td>
+          左：配置 BaseUrl、登录、业务接口选择与调用、离线补传、打开 Excel/环境清单；<br/>
+          右：请求 jsonData、响应 JSON、离线队列表格。
+        </td>
+      </tr>
+      <tr><td>请求/响应字段规则</td><td>规则表网格：新增/修改/删除/刷新</td></tr>
+      <tr><td>通讯过程历史</td><td>HTTPS 过程文本历史（SQLite）</td></tr>
+      <tr><td>运行日志</td><td>级别筛选、导出、打开日志目录</td></tr>
+    </table>
+    <h3>发送 / 响应窗口规则</h3>
+    <ul>
+      <li><strong>发送信息窗口</strong>仅显示类似：
+        <pre>[2026-08-13 18:17:11] 响应摘要  HTTP 200 成功
+回复信息:1234567890</pre>
+      </li>
+      <li><strong>全部响应信息</strong>：请求记录、原始响应、匹配规则、系统提示、错误等。</li>
+    </ul>
+    <h3>菜单</h3>
+    <ul>
+      <li><strong>语言</strong>：中文 / English / 中英对照（语言结合）</li>
+      <li><strong>帮助</strong>：打开帮助文档（F1）、关于</li>
+    </ul>
+  </section>
+
+  <!-- ==================== 4 ==================== -->
+  <section id="https-usage">
+    <h2>四、HTTPS 通讯使用方法</h2>
+    <h3>4.1 本机自测</h3>
+    <ol>
+      <li>启动程序，进入「HTTPS 通讯」。</li>
+      <li>确认端口（默认 8443），点击<strong>启动服务</strong>。</li>
+      <li>对端地址填 <code>https://127.0.0.1:8443</code>，勾选「忽略证书错误」。</li>
+      <li>点「测试连通」，或发送内容如 <code>你好</code> / <code>帮助</code> / <code>时间</code> 触发示例规则。</li>
+      <li>左侧看回复摘要，右侧看全部响应与全过程。</li>
+    </ol>
+    <h3>4.2 两机互发</h3>
+    <ol>
+      <li>双方均启动服务并放行防火墙端口。</li>
+      <li>A 的对端填 <code>https://B的IP:端口</code>；B 同理填 A。</li>
+      <li>勿使用对方的 <code>127.0.0.1</code>。</li>
+    </ol>
+    <h3>4.3 字段规则</h3>
+    <p>在「请求/响应字段规则」页管理规则。服务端收到消息后按规则写入响应 <code>customFields</code>。</p>
+    <ul>
+      <li>匹配方式：Equals / Contains / Any</li>
+      <li>响应值占位符：<code>{now}</code>、<code>{utc}</code>、<code>{machine}</code></li>
+    </ul>
+  </section>
+
+  <!-- ==================== 5 ==================== -->
+  <section id="mes-usage">
+    <h2>五、MES 生产接口使用方法</h2>
+    <h3>5.1 本地模拟联调（推荐先试）</h3>
+    <ol>
+      <li>「HTTPS 通讯」页启动本机服务（8443）。</li>
+      <li>切到「MES 生产接口」，BaseUrl 设为：
+        <pre>https://127.0.0.1:8443/mes</pre>
+      </li>
+      <li>勾选忽略证书错误，保存配置。</li>
+      <li>填写工号/密码/设备号/制令单/工序，点击<strong>登录</strong>。</li>
+      <li>登录成功后 SessionId 会显示；再选择业务接口点击<strong>调用接口</strong>。</li>
+    </ol>
+    <h3>5.2 对接真实 MES</h3>
+    <ol>
+      <li>将 BaseUrl 改为现场 MES 网关地址（仅主机+前缀，不含接口名）。</li>
+      <li>各接口 Path 可在 <code>mes_config.json</code> 修改（见第九章）。</li>
+      <li>正式证书环境可取消「忽略证书错误」。</li>
+    </ol>
+    <h3>5.3 离线补传</h3>
+    <ol>
+      <li>调用失败且为网络异常时，请求自动进入离线队列。</li>
+      <li>网络恢复后点「离线补传」批量重试。</li>
+      <li>补传成功后才写入 Excel 上传日志（与在线成功逻辑一致）。</li>
+    </ol>
+    <h3>5.4 生产 Excel</h3>
+    <p>点击「打开生产Excel」进入目录：</p>
+    <pre>%LocalAppData%\HttpsMessenger\production_logs\</pre>
+    <p>按日文件：<code>Production_yyyyMMdd.xlsx</code>，含 UploadLog / ProductionData 工作表。</p>
+    <div class="warn">
+      <strong>重要：</strong>成功日志仅在接口返回成功后写入，不会出现“未上传却已记成功日志”的情况。
+      当 <code>status=false</code> 时，弹窗展示 <code>result</code> 中的 MES 报错，请提示现场人员。
+    </div>
+  </section>
+
+  <!-- ==================== 6 ==================== -->
+  <section id="mes-protocol">
+    <h2>六、MES 接口请求协议</h2>
+    <table>
+      <tr><th>项</th><th>要求</th></tr>
+      <tr><td>请求方式</td><td>HTTPS POST</td></tr>
+      <tr><td>参数名</td><td>jsonData</td></tr>
+      <tr><td>参数值</td><td>JSON 字符串，UTF-8</td></tr>
+      <tr><td>Content-Type</td><td>application/x-www-form-urlencoded（推荐）</td></tr>
+      <tr><td>返回</td><td>JSON 字符串</td></tr>
+      <tr><td>提交方式</td><td>表单形参，禁止拼到 URL 后</td></tr>
+      <tr><td>Head/Body</td><td>分离，不允许拼接调用</td></tr>
+      <tr><td>时间</td><td>yyyy-MM-dd HH:mm:ss</td></tr>
+      <tr><td>空值</td><td>统一 ""，不允许 null</td></tr>
+    </table>
+    <h3>请求示例（逻辑示意）</h3>
+<pre>POST /mes/LoginCheck HTTP/1.1
+Host: mes.example.com
+Content-Type: application/x-www-form-urlencoded
+
+jsonData=%7B%22userNo%22%3A%221809110053%22%2C...%7D</pre>
+    <h3>通用返回字段</h3>
+    <table>
+      <tr><th>字段</th><th>说明</th></tr>
+      <tr><td>status</td><td>"true" / "false"</td></tr>
+      <tr><td>result</td><td>成功信息或 SessionId；失败时为 MES 报错信息</td></tr>
+      <tr><td>testResult</td><td>预留/测试结果</td></tr>
+      <tr><td>testResultDetails</td><td>明细数组</td></tr>
+      <tr><td>remark</td><td>备注</td></tr>
+    </table>
+  </section>
+
+  <!-- ==================== 7 ==================== -->
+  <section id="mes-apis">
+    <h2>七、MES 接口清单与要点</h2>
+
+    <h3>1. LoginCheck — 设备登录</h3>
+    <p>必填：userNo, passWord, deviceSn, moNumber, groupCode, timeStamp</p>
+    <p>成功时 <code>result</code> = SessionId，后续接口作为 <code>operatorId</code> 使用。</p>
+
+    <h3>2. GetSpecifications — 生产规格参数下发</h3>
+    <p>必填：groupCode, deviceSn, operatorId, moNumber, timeStamp</p>
+    <p>明细在 testResultDetails：paramCode/paramName/上下限/单位等。</p>
+
+    <h3>3. MaterialControl — 产品上料校验</h3>
+    <p>必填含 batchCode, assemblyNo, batchCount, loadItemFlag（1上料/2备料/3下料/4剩余量）</p>
+
+    <h3>4. InStationCheck — 产品进站检查</h3>
+    <p>必填：productSn 等；可选 IsAssemblySn（0组件/1否/2个体料）</p>
+    <p>成功明细可含 productMode：0首测 / 1复测</p>
+
+    <h3>5. SubProductBinding — 半成品组装(配对)</h3>
+    <p>productSn + productSnList[{subProductSn, position}]</p>
+
+    <h3>6. ProductBinding — 半成品与成品绑定</h3>
+    <p>成品条码 + 半成品列表 + groupCode + testResult(0=OK,1=NG)</p>
+
+    <h3>7. GetTestData — 获取测试数据</h3>
+    <p>sn + snType(cell/tray)</p>
+
+    <h3>8. OutStationCheckData — 产品数据上传过站</h3>
+    <p>含 testData / environment / stepData 集合；testResult：0=OK，1=NG</p>
+    <p>该接口成功后会额外写入 ProductionData Excel 明细。</p>
+
+    <h3>9. GetCoordinateResult — 电芯三坐标挑选</h3>
+    <p>snType=tray 批量 / cell 单颗；sorting 状态 0~3 见协议说明。</p>
+
+    <h3>10. GetTaryBarcode — 获取托盘内电芯条码</h3>
+    <p>输入 taryNo；返回 productSn、position、nextGroupCode。</p>
+  </section>
+
+  <!-- ==================== 8 ==================== -->
+  <section id="code">
+    <h2>八、代码结构与实现要点</h2>
+<pre>HttpsMessenger/
+├── Program.cs                      // 入口
+├── MainForm.cs / Designer.cs       // 主界面（多页签、HTTPS 分窗）
+├── MesOperationsPanel.cs           // MES 操作面板
+├── RuleEditForm.cs                 // 字段规则编辑对话框
+├── Localization/Lang.cs            // 中/英/中英对照
+├── Models/
+│   ├── ChatMessage.cs              // 通用消息、Trace、FieldRule
+│   └── Mes/MesJsonHelper.cs        // MES JSON 序列化与时间戳
+├── Services/
+│   ├── HttpsChatServer.cs          // HTTPS 服务 + MES Mock 路由
+│   ├── HttpsChatClient.cs          // HTTPS 客户端 + 过程追踪
+│   ├── CertificateHelper.cs        // 自签名证书
+│   ├── FieldRuleMatcher.cs         // 请求字段匹配
+│   ├── SqliteStore.cs              // 规则与通讯历史
+│   ├── AppLogger.cs                // 运行日志
+│   └── Mes/
+│       ├── MesConfig.cs            // 可配置路径
+│       ├── MesApiClient.cs         // form-urlencoded 客户端
+│       ├── MesService.cs           // 业务编排、先传后记、离线
+│       ├── MesOfflineStore.cs      // 离线队列 SQLite
+│       ├── MesProductionExcelLogger.cs  // ClosedXML Excel
+│       └── MesMockHandler.cs       // 本地模拟 MES
+└── Help/
+    ├── 帮助文档.html               // 本文件
+    └── 运行环境要求清单.html</pre>
+
+    <h3>8.1 HTTPS 服务端（HttpsChatServer）</h3>
+    <ol>
+      <li><code>TcpListener</code> 接受连接 → <code>SslStream.AuthenticateAsServerAsync</code></li>
+      <li>按字节解析 HTTP 请求头与 Body（支持中文 Content-Length）</li>
+      <li>路由：<code>/api/ping</code>、<code>/api/message</code>、以及 MES Mock（如 <code>/mes/LoginCheck</code>）</li>
+      <li>过程写入 <code>CommunicationTrace</code> 供 UI 展示</li>
+    </ol>
+
+    <h3>8.2 MES 客户端（MesApiClient）</h3>
+    <ol>
+      <li>组装 URL = BaseUrl + 可配置 Path（路径可配，参数不进 URL）</li>
+      <li>Body：<code>jsonData=UrlEncode(json)</code></li>
+      <li>Header：Content-Type / Accept / User-Agent 与 Body 分离</li>
+      <li>解析返回 JSON 为 <code>MesApiResponse</code>（status/result/...）</li>
+    </ol>
+
+    <h3>8.3 MesService 日志顺序</h3>
+<pre>发送请求
+  ├─ 网络失败 → 入离线队列（不写成功 Excel）
+  ├─ status=false → 记 ERROR 日志 + 弹窗 result
+  └─ status=true  → 记 INFO + 写 Excel（UploadLog / 可选 ProductionData）</pre>
+
+    <h3>8.4 关键类职责</h3>
+    <table>
+      <tr><th>类</th><th>职责</th></tr>
+      <tr><td>MainForm</td><td>HTTPS UI、语言切换、日志页、嵌入 MES 面板</td></tr>
+      <tr><td>MesOperationsPanel</td><td>MES 配置/登录/调用/补传/展示</td></tr>
+      <tr><td>MesService</td><td>会话、接口封装、离线与 Excel 策略</td></tr>
+      <tr><td>MesApiClient</td><td>底层 HTTPS 表单 POST</td></tr>
+      <tr><td>MesOfflineStore</td><td>离线队列持久化</td></tr>
+      <tr><td>MesProductionExcelLogger</td><td>生产数据 Excel</td></tr>
+      <tr><td>AppLogger</td><td>运行期分级日志</td></tr>
+      <tr><td>Lang</td><td>界面多语言</td></tr>
+    </table>
+  </section>
+
+  <!-- ==================== 9 ==================== -->
+  <section id="data">
+    <h2>九、本地数据与配置路径</h2>
+    <table>
+      <tr><th>内容</th><th>路径</th></tr>
+      <tr><td>MES 配置</td><td>%LocalAppData%\HttpsMessenger\mes_config.json</td></tr>
+      <tr><td>离线补传库</td><td>%LocalAppData%\HttpsMessenger\mes_offline.db</td></tr>
+      <tr><td>生产 Excel</td><td>%LocalAppData%\HttpsMessenger\production_logs\Production_yyyyMMdd.xlsx</td></tr>
+      <tr><td>运行日志</td><td>%LocalAppData%\HttpsMessenger\logs\HttpsMessenger_yyyyMMdd.log</td></tr>
+      <tr><td>字段规则/通讯历史</td><td>%LocalAppData%\HttpsMessenger\https_messenger.db</td></tr>
+      <tr><td>自签名证书</td><td>%LocalAppData%\HttpsMessenger\server.pfx</td></tr>
+      <tr><td>界面语言偏好</td><td>%LocalAppData%\HttpsMessenger\ui_language.txt</td></tr>
+    </table>
+    <h3>mes_config.json 示例字段</h3>
+<pre>{
+  "BaseUrl": "https://127.0.0.1:8443/mes",
+  "IgnoreCertificateErrors": true,
+  "TimeoutSeconds": 30,
+  "OfflineRetryMax": 5,
+  "LoginCheckPath": "/LoginCheck",
+  "GetSpecificationsPath": "/GetSpecifications",
+  "MaterialControlPath": "/MaterialControl",
+  "InStationCheckPath": "/InStationCheck",
+  "SubProductBindingPath": "/SubProductBinding",
+  "ProductBindingPath": "/ProductBinding",
+  "GetTestDataPath": "/GetTestData",
+  "OutStationCheckDataPath": "/OutStationCheckData",
+  "GetCoordinateResultPath": "/GetCoordinateResult",
+  "GetTaryBarcodePath": "/GetTaryBarcode"
+}</pre>
+  </section>
+
+  <!-- ==================== 10 ==================== -->
+  <section id="build">
+    <h2>十、编译与运行</h2>
+<pre>cd HttpsMessenger
+dotnet restore
+dotnet build -c Release
+dotnet run -c Release</pre>
+    <p>可执行文件：</p>
+    <pre>bin\Release\net8.0-windows\HttpsMessenger.exe</pre>
+    <p>也可用 Visual Studio 打开解决方案/项目，F5 调试。</p>
+    <p>依赖包：Microsoft.Data.Sqlite、ClosedXML。</p>
+  </section>
+
+  <!-- ==================== 11 ==================== -->
+  <section id="env">
+    <h2>十一、运行环境要求（摘要）</h2>
+    <p>完整清单见同目录 <a href="运行环境要求清单.html">运行环境要求清单.html</a>，或在 MES 页点击「运行环境清单」。</p>
+    <table>
+      <tr><th>项目</th><th>要求</th></tr>
+      <tr><td>OS</td><td>Windows 10/11 64 位（或 Server 2019+）</td></tr>
+      <tr><td>运行时</td><td>.NET 8 Desktop Runtime</td></tr>
+      <tr><td>内存</td><td>建议 ≥ 4 GB</td></tr>
+      <tr><td>网络</td><td>可访问 MES HTTPS 端口；本机模拟需能监听 8443</td></tr>
+      <tr><td>分辨率</td><td>建议 ≥ 1366×768</td></tr>
+    </table>
+  </section>
+
+  <!-- ==================== 12 ==================== -->
+  <section id="faq">
+    <h2>十二、常见问题</h2>
+    <h3>Q1：MES 登录失败？</h3>
+    <p>检查 BaseUrl、是否已启动本机模拟服务（本地联调）、证书忽略选项、工号/密码/设备号是否正确。看右侧响应 JSON 的 result。</p>
+
+    <h3>Q2：为什么发送窗口只有两行摘要？</h3>
+    <p>按需求设计：发送窗只显示回复信息；完整原始响应当看「全部响应信息」。</p>
+
+    <h3>Q3：离线队列一直失败？</h3>
+    <p>确认网络与 BaseUrl；达到 OfflineRetryMax 后需检查 LastError；可删除无效队列记录后重试。</p>
+
+    <h3>Q4：Excel 没有记录？</h3>
+    <p>仅成功上传后写入。失败或仅入离线队列时不会写成功日志；补传成功后会写。</p>
+
+    <h3>Q5：JSON 解析错误？</h3>
+    <p>勿从网页复制带 \n/\t 的脏字符；程序内用序列化器生成紧凑 JSON。空值用 ""。</p>
+
+    <h3>Q6：端口被占用？</h3>
+    <p>更换监听端口，并同步修改对端地址与 MES BaseUrl 端口。</p>
+
+    <h3>Q7：顶部服务配置区为何不随窗口变？</h3>
+    <p>按需求固定尺寸，保证控件完整可见；下方消息区仍可缩放拖分。</p>
+  </section>
+
+  <footer>
+    HttpsMessenger 帮助文档 · F1 打开 · 配套文件：运行环境要求清单.html
+  </footer>
+</div>
+</body>
+</html>

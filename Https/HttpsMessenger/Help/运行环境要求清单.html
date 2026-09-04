@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>HttpsMessenger 软件运行环境要求清单</title>
+  <style>
+    body { font-family: "Microsoft YaHei UI", sans-serif; margin: 24px; line-height: 1.7; color: #222; }
+    h1 { color: #0f766e; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; }
+    th { background: #f0fdfa; }
+    .tip { background: #ecfdf5; padding: 12px; border-radius: 8px; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <h1>软件运行环境要求清单</h1>
+  <p>适用于 HttpsMessenger（含 MES 生产接口模块）现场部署与验收。</p>
+
+  <h2>一、硬件环境</h2>
+  <table>
+    <tr><th>项目</th><th>最低要求</th><th>推荐配置</th></tr>
+    <tr><td>CPU</td><td>双核 2.0GHz</td><td>四核及以上</td></tr>
+    <tr><td>内存</td><td>4 GB</td><td>8 GB 及以上</td></tr>
+    <tr><td>硬盘</td><td>500 MB 可用空间（含日志/Excel）</td><td>SSD，预留 2 GB+</td></tr>
+    <tr><td>显示器</td><td>1366×768</td><td>1920×1080</td></tr>
+    <tr><td>网络</td><td>可访问 MES 服务器 HTTPS 端口</td><td>千兆有线，延迟 &lt; 50ms</td></tr>
+  </table>
+
+  <h2>二、软件环境</h2>
+  <table>
+    <tr><th>项目</th><th>要求</th></tr>
+    <tr><td>操作系统</td><td>Windows 10/11（64 位）或 Windows Server 2019+</td></tr>
+    <tr><td>.NET 运行时</td><td>.NET 8 Desktop Runtime（net8.0-windows）</td></tr>
+    <tr><td>开发/编译（可选）</td><td>.NET 8 SDK</td></tr>
+    <tr><td>浏览器（查看帮助）</td><td>Edge / Chrome 等现代浏览器</td></tr>
+  </table>
+
+  <h2>三、MES 通讯要求</h2>
+  <ul>
+    <li>协议：HTTPS POST</li>
+    <li>参数名：<code>jsonData</code>（UTF-8 JSON 字符串）</li>
+    <li>提交方式：<code>application/x-www-form-urlencoded</code> 表单，禁止拼接到 URL</li>
+    <li>Head/Body 分离：HTTP Header 与 Body 独立，不允许 URL 拼接 jsonData</li>
+    <li>时间格式：<code>yyyy-MM-dd HH:mm:ss</code></li>
+    <li>空值：使用 <code>""</code>，不允许 null</li>
+    <li>接口 BaseUrl 与各接口 Path 可在 <code>%LocalAppData%\HttpsMessenger\mes_config.json</code> 配置</li>
+  </ul>
+
+  <h2>四、本地数据与日志</h2>
+  <table>
+    <tr><th>类型</th><th>路径</th></tr>
+    <tr><td>MES 配置</td><td>%LocalAppData%\HttpsMessenger\mes_config.json</td></tr>
+    <tr><td>离线补传队列</td><td>%LocalAppData%\HttpsMessenger\mes_offline.db</td></tr>
+    <tr><td>生产 Excel 日志</td><td>%LocalAppData%\HttpsMessenger\production_logs\Production_yyyyMMdd.xlsx</td></tr>
+    <tr><td>运行日志</td><td>%LocalAppData%\HttpsMessenger\logs\</td></tr>
+    <tr><td>SQLite 规则库</td><td>%LocalAppData%\HttpsMessenger\https_messenger.db</td></tr>
+  </table>
+  <div class="tip">
+    <strong>日志原则：</strong>上传成功后才写入 Excel/成功日志；网络失败时进入离线队列，恢复网络后可补传过站数据。
+    status=false 时，result 为 MES 报错信息，程序会弹窗提示现场人员。
+  </div>
+
+  <h2>五、已实现的 MES 接口（11 个）</h2>
+  <ol>
+    <li>LoginCheck — 设备登录</li>
+    <li>GetSpecifications — 生产规格参数下发</li>
+    <li>MaterialControl — 产品上料校验</li>
+    <li>InStationCheck — 产品进站检查</li>
+    <li>SubProductBinding — 半成品组装</li>
+    <li>ProductBinding — 半成品与成品绑定</li>
+    <li>GetTestData — 获取测试数据</li>
+    <li>OutStationCheckData — 产品数据上传过站</li>
+    <li>GetCoordinateResult — 电芯三坐标挑选</li>
+    <li>GetTaryBarcode — 获取托盘电芯条码</li>
+  </ol>
+
+  <h2>六、本地联调（模拟 MES）</h2>
+  <p>启动本机 HTTPS 服务（默认 8443），MES BaseUrl 设为：</p>
+  <pre>https://127.0.0.1:8443/mes</pre>
+  <p>本软件内置 MES 模拟响应，支持上述接口 form-urlencoded 测试。</p>
+</body>
+</html>
